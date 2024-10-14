@@ -1,8 +1,7 @@
 package main
 
-// typedef Todo struct {
-// 	id int,
-// 	description string,
-// 	timeStamtp timestamp,
-//
-// }
+type Todo struct {
+	id          int
+	description string
+	completed   bool
+}

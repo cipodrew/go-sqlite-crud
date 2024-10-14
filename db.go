@@ -9,12 +9,28 @@ import (
 
 var DB *sql.DB
 
-func OpenDB() error {
+const tableName = "todos"
+
+func openDB() error {
 	fmt.Println("opening connection!")
 	db, err := sql.Open("sqlite3", "./todo.db")
 	if err != nil {
 		return err
 	}
-	fmt.Printf("connections used: %d", db.Stats().InUse)
+	DB = db
+	fmt.Printf("connections used: %d\n", db.Stats().InUse)
+	return nil
+}
+
+func closeDB() error {
+	return DB.Close()
+}
+
+func createDB() error {
+	_, err := DB.Exec("create table if not exists " + tableName +
+		" (id integer not null primary key, description text, completed boolean);")
+	if err != nil {
+		return fmt.Errorf("Error creating database: %s\n", tableName)
+	}
 	return nil
 }
