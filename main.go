@@ -1,7 +1,13 @@
 package main
 
-import "go-crud/cmd"
+import (
+	"fmt"
+	"go-crud/cmd"
+)
 
 func main() {
+	fmt.Println("starting")
+	OpenDB()
+
 	cmd.Execute()
 }
