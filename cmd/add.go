@@ -2,6 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+
+	"go-crud/db"
+
 	"github.com/spf13/cobra"
 )
 
@@ -15,5 +19,16 @@ var addCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// Do Stuff Here
 		fmt.Printf("Let's add!")
-	},
+		db.OpenDB()
+		err := db.CreateDB()
+		if err != nil {
+			panic(err)
+		}
+		defer func() {
+			err := db.CloseDB()
+			if err != nil {
+				log.Println("Error closing DB connection")
+			}
+		}()
+	}, //Run
 }
