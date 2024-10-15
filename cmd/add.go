@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"go-crud/db"
+	"go-crud/model"
 
 	"github.com/spf13/cobra"
 )
@@ -24,6 +25,18 @@ var addCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
+		t := model.Todo{}
+		err = db.InsertTodo(t)
+		if err != nil {
+			// log.Fatal("Error inserting into DB")
+			panic(err)
+		}
+		todos, err := db.RetrieveAllTodos()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%v", todos)
+		// fmt.Printf("id inserted: %d\n", id)
 		defer func() {
 			err := db.CloseDB()
 			if err != nil {
