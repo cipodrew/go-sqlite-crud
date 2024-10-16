@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"go-crud/db"
-	"go-crud/model"
 
 	"github.com/spf13/cobra"
 )
@@ -18,36 +17,43 @@ var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "adds a todo",
 	Run: func(cmd *cobra.Command, args []string) {
-		// Do Stuff Here
-		fmt.Printf("Let's add!")
-		db.OpenDB()
-		err := db.CreateDB()
+		error := cobra.RangeArgs(1, 1)(cmd, args) //immediatly executes the return func
+		if error != nil {
+			log.Fatal("unexpected number of arguments\n", error)
+		}
+
+		fmt.Printf("Let's add!\n")
+		err := db.OpenDB()
 		if err != nil {
 			panic(err)
 		}
-		t := model.Todo{}
-		id, err := db.InsertTodo(t)
-		if err != nil {
-			// log.Fatal("Error inserting into DB")
-			panic(err)
-		}
-		fmt.Printf("id inserted: %d\n", id)
-		// _, err = db.InsertTodoByDesc("ciao")
-		// if err != nil {
-		// 	// log.Fatal("Error inserting into DB")
-		// 	panic(err)
-		// }
-		todos, err := db.RetrieveAllTodos()
+		err = db.CreateDB()
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("%v", todos)
-		// fmt.Printf("id inserted: %d\n", id)
 		defer func() {
 			err := db.CloseDB()
 			if err != nil {
 				log.Println("Error closing DB connection")
 			}
 		}()
+		// t := model.Todo{}
+		// id, err := db.InsertTodo(t)
+		// if err != nil {
+		// 	// log.Fatal("Error inserting into DB")
+		// 	panic(err)
+		// }
+		id, err := db.InsertTodoByDesc(args[0])
+		if err != nil {
+			// log.Fatal("Error inserting into DB")
+			panic(err)
+		}
+		fmt.Printf("id inserted: %d\n", id)
+		todos, err := db.RetrieveAllTodos()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%v", todos)
+		// fmt.Printf("id inserted: %d\n", id)
 	}, //Run
 }

@@ -33,11 +33,28 @@ func DeleteTodo(t model.Todo) error {
 	}
 	return nil
 }
+func DeleteTodoById(id int) error {
+	_, err := DB.Exec(deleteStm, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 const updateStm = `update todos set description = (?) WHERE id = (?)`
 
 func UpdateTodo(t model.Todo, newDescription string) error {
 	_, err := DB.Exec(updateStm, newDescription, newDescription, t.Id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+const completeStm = `update todos set completed = (?) WHERE id = (?)`
+
+func CompleteTodo(id int, completed bool) error {
+	_, err := DB.Exec(completeStm, completed, id)
 	if err != nil {
 		return err
 	}
