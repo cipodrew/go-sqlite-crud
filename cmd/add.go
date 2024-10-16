@@ -26,11 +26,17 @@ var addCmd = &cobra.Command{
 			panic(err)
 		}
 		t := model.Todo{}
-		err = db.InsertTodo(t)
+		id, err := db.InsertTodo(t)
 		if err != nil {
 			// log.Fatal("Error inserting into DB")
 			panic(err)
 		}
+		fmt.Printf("id inserted: %d\n", id)
+		// _, err = db.InsertTodoByDesc("ciao")
+		// if err != nil {
+		// 	// log.Fatal("Error inserting into DB")
+		// 	panic(err)
+		// }
 		todos, err := db.RetrieveAllTodos()
 		if err != nil {
 			panic(err)

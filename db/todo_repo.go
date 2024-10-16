@@ -1,20 +1,27 @@
 package db
 
 import (
-	"fmt"
 	"go-crud/model"
 )
 
 const insertStm = "insert into todos (description, completed) values (?,?) returning id"
 
-func InsertTodo(t model.Todo) (err error) {
+func InsertTodo(t model.Todo) (insertedId int, err error) {
 	var id int
 	err = DB.QueryRow(insertStm, t.Description, t.Completed).Scan(&id)
 	if err != nil {
-		return err
+		return -1, err
 	}
-	fmt.Printf("id inserted: %d\n", id)
-	return nil
+	return id, nil
+}
+
+func InsertTodoByDesc(description string) (insertedId int, err error) {
+	var id int
+	err = DB.QueryRow(insertStm, description, false).Scan(&id)
+	if err != nil {
+		return -1, err
+	}
+	return id, nil
 }
 
 const deleteStm = "delete from todos WHERE id = (?)"
