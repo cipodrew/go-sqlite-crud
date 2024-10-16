@@ -4,3 +4,4 @@ sqlite3 todo.db "SELECT name FROM sqlite_master WHERE type='table' AND name NOT 
 
 sqlite3 todo.db "DROP table todos;"
 
+curl "http://localhost:8090/complete?id=1"
