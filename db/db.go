@@ -13,7 +13,7 @@ var DB *sql.DB
 const tableName = "todos"
 
 func OpenDB() error {
-	fmt.Println("opening connection!")
+	fmt.Println("opening DB connection!")
 	db, err := sql.Open("sqlite3", "./todo.db")
 	if err != nil {
 		return err
