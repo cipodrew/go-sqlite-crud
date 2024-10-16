@@ -1,7 +1,11 @@
 package model
 
+import "time"
+
 type Todo struct {
 	Id          int
 	Description string
-	Completed   bool
+	CreatedAt   time.Time
+	// CreatedAt int64
+	Completed bool
 }

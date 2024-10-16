@@ -1,14 +1,17 @@
 package db
 
 import (
+	"fmt"
 	"go-crud/model"
+	"time"
 )
 
-const insertStm = "insert into todos (description, completed) values (?,?) returning id"
+const insertStm = "insert into todos (description, completed, created_at) values (?,?,?) returning id"
+const formatString = "2006-01-02 15:04:05"
 
 func InsertTodo(t model.Todo) (insertedId int, err error) {
 	var id int
-	err = DB.QueryRow(insertStm, t.Description, t.Completed).Scan(&id)
+	err = DB.QueryRow(insertStm, t.Description, t.Completed, time.Now().UnixMilli()).Scan(&id)
 	if err != nil {
 		return -1, err
 	}
@@ -17,7 +20,8 @@ func InsertTodo(t model.Todo) (insertedId int, err error) {
 
 func InsertTodoByDesc(description string) (insertedId int, err error) {
 	var id int
-	err = DB.QueryRow(insertStm, description, false).Scan(&id)
+	fmt.Printf("%v", time.Now().Format(formatString))
+	err = DB.QueryRow(insertStm, description, false, time.Now().Format(formatString)).Scan(&id)
 	if err != nil {
 		return -1, err
 	}
@@ -43,7 +47,7 @@ func DeleteTodoById(id int) error {
 
 const updateStm = `update todos set description = (?) WHERE id = (?)`
 
-func UpdateTodo(t model.Todo, newDescription string) error {
+func UpdateTodoDesc(t model.Todo, newDescription string) error {
 	_, err := DB.Exec(updateStm, newDescription, newDescription, t.Id)
 	if err != nil {
 		return err
@@ -61,7 +65,7 @@ func CompleteTodo(id int, completed bool) error {
 	return nil
 }
 
-const selectStm = `select id,description,completed from todos`
+const selectStm = `select id,description,completed,created_at from todos`
 
 func RetrieveAllTodos() ([]model.Todo, error) {
 	var todos []model.Todo
@@ -72,7 +76,12 @@ func RetrieveAllTodos() ([]model.Todo, error) {
 	defer rows.Close()
 	for rows.Next() {
 		todo := model.Todo{}
-		err := rows.Scan(&todo.Id, &todo.Description, &todo.Completed)
+		var mytime string
+		err := rows.Scan(&todo.Id, &todo.Description, &todo.Completed, &mytime)
+		if err != nil {
+			return []model.Todo{}, err
+		}
+		todo.CreatedAt, err = time.Parse(formatString, mytime)
 		if err != nil {
 			return []model.Todo{}, err
 		}

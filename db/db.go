@@ -29,7 +29,7 @@ func CloseDB() error {
 
 func CreateDB() error {
 	_, err := DB.Exec("create table if not exists " + tableName +
-		" (id integer not null primary key, description text, completed boolean);")
+		" (id integer not null primary key, description text, completed boolean, created_at int);")
 	if err != nil {
 		return fmt.Errorf("Error creating database: %s\n", tableName)
 	}

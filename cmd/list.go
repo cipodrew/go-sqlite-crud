@@ -35,10 +35,10 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("ID\tTASK\tCOMPLETED\n")
+		fmt.Printf("ID\tTASK\tCOMPLETED\tCREATED_AT\n")
 		for i := range len(todos) {
 			todo := todos[i]
-			fmt.Printf("%d\t%s\t%t\n", todo.Id, todo.Description, todo.Completed)
+			fmt.Printf("%d\t%s\t%t\t%s\n", todo.Id, todo.Description, todo.Completed, todo.CreatedAt)
 		}
 		// fmt.Printf("id inserted: %d\n", id)
 	}, //Run
