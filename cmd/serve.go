@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"go-crud/db"
@@ -28,7 +30,13 @@ var serveCmd = &cobra.Command{
 		http.HandleFunc("/headers", handleGetHeaders)
 		http.HandleFunc("/", handleFetchAllTodos)
 		http.HandleFunc("/complete", handleCompleteTodo)
-		http.ListenAndServe(":8090", nil)
+		err := http.ListenAndServe(":8090", nil)
+		if errors.Is(err, http.ErrServerClosed) {
+			fmt.Printf("server closed\n")
+		} else if err != nil {
+			log.Printf("error starting server: %s\n", err)
+			os.Exit(1)
+		}
 	}, //Run
 }
 
