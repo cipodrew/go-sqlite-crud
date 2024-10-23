@@ -5,7 +5,7 @@ import (
 	"log"
 	"strconv"
 
-	"go-crud/db"
+	"go-crud/repo"
 
 	"github.com/spf13/cobra"
 )
@@ -22,21 +22,24 @@ var deleteCmd = &cobra.Command{
 		if error != nil {
 			log.Fatal("unexpected number of arguments\n", error)
 		}
-		err := db.OpenDB()
-		if err != nil {
-			panic(err)
-		}
-		defer func() {
-			err := db.CloseDB()
-			if err != nil {
-				log.Println("Error closing DB connection")
-			}
-		}()
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
 			log.Fatal("not an integer\n", err)
 		}
-		err = db.DeleteTodoById(id)
+
+		db, err := repo.OpenDB()
+		if err != nil {
+			log.Fatal("error connecting to DB")
+		}
+		defer func() {
+			err := db.Close()
+			if err != nil {
+				log.Println("Error closing DB connection")
+			}
+		}()
+
+		todoRepo := repo.NewTodoRepo(db)
+		err = todoRepo.DeleteTodoById(id)
 		if err != nil {
 			panic(err)
 		}

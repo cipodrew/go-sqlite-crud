@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"go-crud/db"
+	"go-crud/repo"
 
 	"github.com/spf13/cobra"
 )
@@ -22,34 +22,32 @@ var addCmd = &cobra.Command{
 			log.Fatal("unexpected number of arguments\n", error)
 		}
 
-		fmt.Printf("Let's add!\n")
-		err := db.OpenDB()
+		db, err := repo.OpenDB()
 		if err != nil {
-			panic(err)
-		}
-		err = db.CreateDB()
-		if err != nil {
-			panic(err)
+			log.Fatal("error connecting to DB")
 		}
 		defer func() {
-			err := db.CloseDB()
+			err := db.Close()
 			if err != nil {
 				log.Println("Error closing DB connection")
 			}
 		}()
+
+		todoRepo := repo.NewTodoRepo(db)
+		fmt.Printf("Let's add!\n")
 		// t := model.Todo{}
 		// id, err := db.InsertTodo(t)
 		// if err != nil {
 		// 	// log.Fatal("Error inserting into DB")
 		// 	panic(err)
 		// }
-		id, err := db.InsertTodoByDesc(args[0])
+		id, err := todoRepo.InsertTodoByDesc(args[0])
 		if err != nil {
 			// log.Fatal("Error inserting into DB")
 			panic(err)
 		}
 		fmt.Printf("id inserted: %d\n", id)
-		todos, err := db.RetrieveAllTodos()
+		todos, err := todoRepo.RetrieveAllTodos()
 		if err != nil {
 			panic(err)
 		}

@@ -8,7 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"go-crud/db"
+	"go-crud/repo"
 
 	"github.com/spf13/cobra"
 )
@@ -26,11 +26,28 @@ var serveCmd = &cobra.Command{
 			log.Fatal("unexpected number of arguments\n", error)
 		}
 
+		db, err := repo.OpenDB()
+		if err != nil {
+			log.Fatal("error connecting to DB")
+		}
+		defer func() {
+			err := db.Close()
+			if err != nil {
+				log.Println("Error closing DB connection")
+			}
+		}()
+
+		todoRepo := repo.NewTodoRepo(db)
+
 		http.HandleFunc("/hi", handleHelloWorld)
 		http.HandleFunc("/headers", handleGetHeaders)
-		http.HandleFunc("/", handleFetchAllTodos)
-		http.HandleFunc("/complete", handleCompleteTodo)
-		err := http.ListenAndServe(":8090", nil)
+		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			handleFetchAllTodos(w, r, todoRepo)
+		})
+		http.HandleFunc("/complete", func(w http.ResponseWriter, r *http.Request) {
+			handleCompleteTodo(w, r, todoRepo)
+		})
+		err = http.ListenAndServe(":8090", nil)
 		if errors.Is(err, http.ErrServerClosed) {
 			fmt.Printf("server closed\n")
 		} else if err != nil {
@@ -53,19 +70,9 @@ func handleGetHeaders(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func handleFetchAllTodos(w http.ResponseWriter, req *http.Request) {
-	err := db.OpenDB()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		err := db.CloseDB()
-		if err != nil {
-			log.Println("Error closing DB connection")
-		}
-	}()
+func handleFetchAllTodos(w http.ResponseWriter, req *http.Request, r *repo.TodoRepo) {
 	fmt.Println(req.UserAgent()) //log user agent
-	todos, err := db.RetrieveAllTodos()
+	todos, err := r.RetrieveAllTodos()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -77,21 +84,11 @@ func handleFetchAllTodos(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func handleCompleteTodo(w http.ResponseWriter, req *http.Request) {
-	err := db.OpenDB()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		err := db.CloseDB()
-		if err != nil {
-			log.Println("Error closing DB connection")
-		}
-	}()
+func handleCompleteTodo(w http.ResponseWriter, req *http.Request, r *repo.TodoRepo) {
 	fmt.Println(req.UserAgent()) //log user agent
 	idParam := req.URL.Query().Get("id")
 	id, err := strconv.Atoi(idParam)
-	err = db.CompleteTodo(id, true)
+	err = r.CompleteTodo(id, true)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

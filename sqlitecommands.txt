@@ -5,3 +5,11 @@ sqlite3 todo.db "SELECT name FROM sqlite_master WHERE type='table' AND name NOT 
 sqlite3 todo.db "DROP table todos;"
 
 curl "http://localhost:8090/complete?id=1"
+
+sqlite3 todo.db "INSERT INTO todos (id, description, completed, created_at) VALUES 
+(6, 'Finish AI project', 0, '2024-01-23 09:15:30'),
+(7, 'Read about quantum computing', 1, '2024-01-17 12:34:56'),
+(8, 'Prepare dinner', 0, '2024-01-20 18:45:00'),
+(9, 'Go for a run', 1, '2024-01-19 07:30:00');"
+
+sqlite3 todo.db "SELECT * FROM todos"

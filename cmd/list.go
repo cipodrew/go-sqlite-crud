@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"go-crud/db"
+	"go-crud/repo"
 
 	"github.com/spf13/cobra"
 )
@@ -21,17 +21,19 @@ var listCmd = &cobra.Command{
 		if error != nil {
 			log.Fatal("unexpected number of arguments\n", error)
 		}
-		err := db.OpenDB()
+		db, err := repo.OpenDB()
 		if err != nil {
-			panic(err)
+			log.Fatal("error connecting to DB")
 		}
 		defer func() {
-			err := db.CloseDB()
+			err := db.Close()
 			if err != nil {
 				log.Println("Error closing DB connection")
 			}
 		}()
-		todos, err := db.RetrieveAllTodos()
+
+		todoRepo := repo.NewTodoRepo(db)
+		todos, err := todoRepo.RetrieveAllTodos()
 		if err != nil {
 			panic(err)
 		}
