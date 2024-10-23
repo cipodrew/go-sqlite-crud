@@ -18,6 +18,10 @@ func (r *TodoRepo) InsertTodo(t model.Todo) (insertedId int, err error) {
 	return id, nil
 }
 
+func (r *TodoRepo) GetConnectionPoolInfo() (int, int) {
+	return r.db.Stats().OpenConnections, r.db.Stats().MaxOpenConnections
+}
+
 func (r *TodoRepo) InsertTodoByDesc(description string) (insertedId int, err error) {
 	var id int
 	fmt.Printf("%v", time.Now().Format(formatString))
