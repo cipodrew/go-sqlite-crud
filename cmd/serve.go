@@ -83,7 +83,7 @@ func handleFetchAllTodos(w http.ResponseWriter, req *http.Request, r *repo.TodoR
 		fmt.Fprintf(w, "%d\t%s\t%t\t%s\n", todo.Id, todo.Description, todo.Completed, todo.CreatedAt)
 	}
 	current, max := r.GetConnectionPoolInfo()
-	fmt.Fprintf(w, "Pool active connections: %d, max: %d\n", current, max)
+	fmt.Printf("Pool active connections: %d, max: %d\n", current, max)
 }
 
 func handleCompleteTodo(w http.ResponseWriter, req *http.Request, r *repo.TodoRepo) {
