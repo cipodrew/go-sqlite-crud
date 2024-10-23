@@ -13,3 +13,5 @@ sqlite3 todo.db "INSERT INTO todos (id, description, completed, created_at) VALU
 (9, 'Go for a run', 1, '2024-01-19 07:30:00');"
 
 sqlite3 todo.db "SELECT * FROM todos"
+
+sqlite3 test.db "create table if not exists todos (id integer not null primary key, description text, completed boolean, created_at int);"
