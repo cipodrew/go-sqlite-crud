@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"strconv"
@@ -27,7 +28,7 @@ var deleteCmd = &cobra.Command{
 			log.Fatal("not an integer\n", err)
 		}
 
-		db, err := repo.OpenDB()
+		db, err := sql.Open("sqlite3", "./todo.db")
 		if err != nil {
 			log.Fatal("error connecting to DB")
 		}

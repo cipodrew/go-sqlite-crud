@@ -1,8 +1,8 @@
 package repo
 
 import (
-	"database/sql"
-	"fmt"
+	// "database/sql"
+	// "fmt"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -11,23 +11,15 @@ import (
 
 const tableName = "todos"
 
-type TodoRepo struct {
-	db *sql.DB
-}
-
-func NewTodoRepo(db *sql.DB) *TodoRepo {
-	return &TodoRepo{db: db}
-}
-
-func OpenDB() (*sql.DB, error) {
-	fmt.Println("opening DB connection!")
-	db, err := sql.Open("sqlite3", "./todo.db")
-	if err != nil {
-		return nil, err
-	}
-	fmt.Printf("connections used: %d\n", db.Stats().InUse)
-	return db, nil
-}
+// func OpenDB() (*sql.DB, error) {
+// 	fmt.Println("opening DB connection!")
+// 	db, err := sql.Open("sqlite3", "./todo.db")
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	fmt.Printf("connections used: %d\n", db.Stats().InUse)
+// 	return db, nil
+// }
 
 // func CreateDB() error {
 // 	var db = sql.DB

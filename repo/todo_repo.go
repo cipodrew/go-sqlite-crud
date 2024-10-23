@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"database/sql"
 	"fmt"
 	"go-crud/model"
 	"time"
@@ -8,6 +9,14 @@ import (
 
 const insertStm = "insert into todos (description, completed, created_at) values (?,?,?) returning id"
 const formatString = "2006-01-02 15:04:05"
+
+type TodoRepo struct {
+	db *sql.DB
+}
+
+func NewTodoRepo(db *sql.DB) *TodoRepo {
+	return &TodoRepo{db: db}
+}
 
 func (r *TodoRepo) InsertTodo(t model.Todo) (insertedId int, err error) {
 	var id int

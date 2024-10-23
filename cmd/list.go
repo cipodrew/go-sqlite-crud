@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
@@ -21,7 +22,7 @@ var listCmd = &cobra.Command{
 		if error != nil {
 			log.Fatal("unexpected number of arguments\n", error)
 		}
-		db, err := repo.OpenDB()
+		db, err := sql.Open("sqlite3", "./todo.db")
 		if err != nil {
 			log.Fatal("error connecting to DB")
 		}
